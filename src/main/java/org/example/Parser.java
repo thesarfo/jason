@@ -15,7 +15,7 @@ public class Parser {
         if (tokens.get(current).equals("{")) {
             current++;
             if (tokens.get(current).equals("}")) {
-                return true;
+                return true;  // Empty JSON object
             } else {
                 return parseMembers();
             }
@@ -32,6 +32,7 @@ public class Parser {
                 }
             }
             if (tokens.get(current).equals("}")) {
+                current++;
                 return true;
             }
         }
@@ -43,9 +44,41 @@ public class Parser {
             current++;
             if (tokens.get(current).equals(":")) {
                 current++;
-                if (tokens.get(current).startsWith("\"")) {
+                if (parseValue()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean parseValue() {
+        String token = tokens.get(current);
+        if (token.startsWith("\"") || token.equals("true") || token.equals("false") || token.equals("null") || token.matches("\\d+(\\.\\d+)?")) {
+            current++;
+            return true;
+        } else if (token.equals("{")) {
+            return parse();
+        } else if (token.equals("[")) {
+            return parseArray();
+        }
+        return false;
+    }
+
+    private boolean parseArray() {
+        current++;
+        if (tokens.get(current).equals("]")) {
+            current++;
+            return true;
+        } else {
+            while (parseValue()) {
+                if (tokens.get(current).equals(",")) {
+                    current++;
+                } else if (tokens.get(current).equals("]")) {
                     current++;
                     return true;
+                } else {
+                    return false;
                 }
             }
         }

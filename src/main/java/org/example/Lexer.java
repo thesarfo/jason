@@ -7,16 +7,14 @@ import java.util.regex.Pattern;
 
 public class Lexer {
     private String input;
-    private int current;
 
     public Lexer(String input) {
         this.input = input;
-        this.current = 0;
     }
 
     public List<String> tokenize() throws Exception {
         List<String> tokens = new ArrayList<>();
-        Pattern pattern = Pattern.compile("\"[^\"]*\"|[:,{}]");
+        Pattern pattern = Pattern.compile("\"[^\"]*\"|true|false|null|\\d+(\\.\\d+)?|[:,{}\\[\\]]");
         Matcher matcher = pattern.matcher(input);
 
         while (matcher.find()) {
@@ -29,4 +27,3 @@ public class Lexer {
         return tokens;
     }
 }
-
