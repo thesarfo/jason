@@ -2,6 +2,8 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Lexer {
     private String input;
@@ -12,30 +14,19 @@ public class Lexer {
         this.current = 0;
     }
 
-    public List<String> tokenize() throws Exception{
+    public List<String> tokenize() throws Exception {
         List<String> tokens = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\"[^\"]*\"|[:,{}]");
+        Matcher matcher = pattern.matcher(input);
 
-        while (current < input.length()) {
-            char ch = input.charAt(current);
-            switch (ch) {
-                case '{':
-                    tokens.add("{");
-                    current++;
-                    break;
-                case '}':
-                    tokens.add("}");
-                    current++;
-                    break;
-                case ' ':
-                case '\n':
-                case '\r':
-                case '\t':
-                    current++;
-                    break;
-                default:
-                    throw new Exception("Unexpected character: " + ch);
+        while (matcher.find()) {
+            String token = matcher.group();
+            if (token.trim().isEmpty()) {
+                continue;
             }
+            tokens.add(token);
         }
         return tokens;
     }
 }
+

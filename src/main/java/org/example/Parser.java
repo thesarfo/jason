@@ -12,8 +12,42 @@ public class Parser {
     }
 
     public boolean parse() {
-        if (tokens.size() == 2 && tokens.get(0).equals("{") && tokens.get(1).equals("}")) {
-            return true;
+        if (tokens.get(current).equals("{")) {
+            current++;
+            if (tokens.get(current).equals("}")) {
+                return true;
+            } else {
+                return parseMembers();
+            }
+        }
+        return false;
+    }
+
+    private boolean parseMembers() {
+        if (parsePair()) {
+            while (tokens.get(current).equals(",")) {
+                current++;
+                if (!parsePair()) {
+                    return false;
+                }
+            }
+            if (tokens.get(current).equals("}")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean parsePair() {
+        if (tokens.get(current).startsWith("\"")) {
+            current++;
+            if (tokens.get(current).equals(":")) {
+                current++;
+                if (tokens.get(current).startsWith("\"")) {
+                    current++;
+                    return true;
+                }
+            }
         }
         return false;
     }
